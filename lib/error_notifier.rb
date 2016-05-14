@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require 'error_notifier/version'
-
+require 'error_notifier/configuration'
 # Error Notifier
 #
 # Central points for all of your Error notification
@@ -9,10 +9,18 @@ require 'error_notifier/version'
 # Example:
 #
 #   ErrorNotifier.configure do |c|
-#     c.add_notifier(NewRelic::Agent, :notice_error)
-#     c.add_notifier(Honeybadger, :notify)
-#     c.add_notifier(Bugsnag, :notify)
-#     c.add_notifier(Kernel, :puts)
+#     c.add_notifier(:newrelic) do |exception, _options|
+#       NewRelic::Agent.notice_error(e)
+#     end
+#     c.add_notifier(:honeybadger) do |exception, options|
+#       Honeybadger.notify(exception, options)
+#     end
+#     c.add_notifier(:bugsnag) do |exception|
+#       Bugsnag.notify(exception)
+#     end
+#     c.add_notifier(:kernel) do |exception, options|
+#       Kernel.puts(exception)
+#     end
 #   end
 #
 # ... later ...
@@ -24,30 +32,6 @@ require 'error_notifier/version'
 # end
 #
 module ErrorNotifier
-  # Configuration class
-  #
-  # This class is in charge for managing the configuration of
-  # the notifiers. Namely, it's used to store a link
-  # to all the different ways the notifier can send out
-  # infomation about an exception
-  class Configuration
-    attr_reader :notifiers
-
-    def initialize
-      @notifiers = {}
-    end
-
-    def add_notifier(notifier, method)
-      raise NoMethodError, "#{notifier} does not respond to #{method}" unless notifier.respond_to? method
-      @notifiers = {} unless defined? @notifiers
-      @notifiers[notifier] = method
-    end
-
-    def delete_notifier(notifier)
-      @notifiers.delete(notifier) if defined? @notifiers
-    end
-  end
-
   class << self
     def configure
       @configuration ||= Configuration.new
@@ -56,14 +40,15 @@ module ErrorNotifier
 
     # Actually send out the notifications
     # to all the registered services
-    def notify(e)
-      configuration.notifiers.each do |notifier, method|
-        notifier.send(method, e)
+    def notify(e, options = {})
+      configuration.notifiers.each do |_name, notifier|
+        notifier.call(e, options)
       end
       nil
     end
 
     private
+
     def configuration
       @configuration ||= Configuration.new
     end
