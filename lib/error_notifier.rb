@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 require 'error_notifier/version'
-require 'error_notifier/configuration'
 # Error Notifier
 #
 # Central points for all of your Error notification
@@ -33,24 +32,23 @@ require 'error_notifier/configuration'
 #
 module ErrorNotifier
   class << self
-    def configure
-      @configuration ||= Configuration.new
-      yield @configuration
-    end
-
     # Actually send out the notifications
     # to all the registered services
     def notify(e, options = {})
-      configuration.notifiers.each do |_name, notifier|
+      @notifiers = {} unless defined? @notifiers
+      @notifiers.each do |_name, notifier|
         notifier.call(e, options)
       end
       nil
     end
 
-    private
+    def add_notifier(name, &block)
+      @notifiers = {} unless defined? @notifiers
+      @notifiers[name] = block
+    end
 
-    def configuration
-      @configuration ||= Configuration.new
+    def delete_notifier(name)
+      @notifiers.delete(name) if defined? @notifiers
     end
   end
 end
