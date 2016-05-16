@@ -1,6 +1,6 @@
 # ErrorNotifier
 
-A tool for managing multiple error handlers.
+A tool for managing multiple error handlers. This decouples the error handling from the tools that is used to do so.
 
 ## Installation
 
@@ -24,6 +24,60 @@ This tools enables you to register multiple error handlers, and report to them a
 
 It allows for decoupling between the tool used to notify errors, and where those errors are being notified.
 
+It a single place to manage all of your error handling tools.
+
+Example:
+
+Registering a new tool:
+
+```ruby
+# config/initializer.rb
+
+ErrorNotifier.add_notifier(:my_notifier) do |exception, options|
+  # Do something with the exception
+  # Optional parameters can be passed in the options
+end
+
+# Example with NewRelic:
+ErrorNotifier.add_notifier(:newrelic) do |exception, options|
+  NewRelic::Agent.notice_error(exception)
+end
+
+# Example with Honeybader
+ErrorNotifier.add_notifier(:honeybadger) do |exception, options|
+  Honeybadger.notify_or_ignore(exception)
+end
+```
+
+Then, in the actual code
+
+```ruby
+begin
+  # Do something that may raise an exception
+rescue => e
+  ErrorNotifier.notify(e)
+end
+```
+
+Now suppose we wanted to add options, for specific handling of some tools, we could have the following in our initializer
+
+```ruby
+# in an initializer
+ErrorNotifier.add_notifier(:my_notifier) do |exception, options|
+  MyNotifier.notify(exception, options[:my_notifier])
+end
+
+# in code
+begin
+  #...
+rescue => e
+  options = { my_notifier: 'Some Cool Hash' }
+  ErrorNotifier.notify(e, options)
+end
+```
+
+Now, the addition/removal of an existing tool can be done independently (loosely coupled) to the tool being used, while the granularity of error logging that each tool provides you with can be preserved.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -33,7 +87,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/error_notifier.
-
 
 ## License
 
