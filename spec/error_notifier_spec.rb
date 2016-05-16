@@ -12,6 +12,44 @@ describe ErrorNotifier do
     it 'adds to the list of notifiers' do
       expect { subject }.to change { described_class.instance_variable_get('@notifiers')}.to include({ foo: anything })
     end
+
+    describe 'passing an object to the notifier' do
+      context 'when the object does not implement call' do
+        subject { described_class.add_notifier(object) }
+        let(:object) { double('An Object') }
+        it 'raises an error' do
+          expect{ subject }.to raise_error StandardError
+        end
+      end
+
+      context 'when the object does implement call' do
+        subject { described_class.add_notifier(object) }
+        let(:object) { double('An Object', call: true ) }
+
+        context 'when the arity is wrong' do
+          before :each do
+            allow(object).to receive(:method).with(:call).and_return(double(arity: 1))
+          end
+          it 'raises an error' do
+            expect{ subject }.to raise_error StandardError
+          end
+        end
+
+        context 'when the arity is correct' do
+          before :each do
+            allow(object).to receive(:method).with(:call).and_return(double(arity: 2))
+          end
+
+          it 'does not raise an error' do
+            expect{ subject }.not_to raise_error
+          end
+
+          it 'adds the object to the list of observers' do
+            expect { subject }.to change { described_class.instance_variable_get('@notifiers')}.to include({ object.class.to_s => object })
+          end
+        end
+      end
+    end
   end
 
   describe '.delete_notifier' do

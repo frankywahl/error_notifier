@@ -78,6 +78,24 @@ end
 
 Now, the addition/removal of an existing tool can be done independently (loosely coupled) to the tool being used, while the granularity of error logging that each tool provides you with can be preserved.
 
+### Adding a custom tool
+A custom tool can be added by responding to `.call(error, options)` where error is the error being raised.
+
+Example:
+
+```ruby
+class CustomNotifier
+  def call(error, options)
+    # Do something cool with the error and options
+    # For now just print them
+    Kernel.puts(error)
+    Kernel.puts(options)
+  end
+end
+
+ErrorNotifier.add_notifier(CustomNotifier)
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

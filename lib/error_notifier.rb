@@ -44,7 +44,14 @@ module ErrorNotifier
 
     def add_notifier(name, &block)
       @notifiers = {} unless defined? @notifiers
-      @notifiers[name] = block
+      if block_given?
+        @notifiers[name] = block
+      else
+        unless (name.respond_to? :call) && (name.method(:call).arity == 2)
+          raise "When passing object #{name} to the ErrorNotifier, it must respond to `call(e, options)`"
+        end
+        @notifiers[name.class.to_s] = name
+      end
     end
 
     def delete_notifier(name)
