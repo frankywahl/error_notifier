@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 task :console do
-  require "pry"
+  require "irb"
   require "error_notifier"
   ARGV.clear
-  Pry.start
+  IRB.start
 end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'error_notifier/version'
+
+require "error_notifier/version"
 # Error Notifier
 #
 # Central points for all of your Error notification

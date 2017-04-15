@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ErrorNotifier
   # A version object
   class Version
@@ -14,7 +15,7 @@ module ErrorNotifier
     # Return the current version of ErrorNotifer
     # following the semantics versioning
     def self.to_s
-      [MAJOR, MINOR, PATCH, PRE].compact.join('.')
+      [MAJOR, MINOR, PATCH, PRE].compact.join(".")
     end
   end
 
