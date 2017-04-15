@@ -4,8 +4,8 @@ require "yard"
 
 YARD::Rake::YardocTask.new do |t|
   t.files = ["lib/**/*.rb"] # optional
-  # t.options = ['--markdown', '--extra', '--opts'] # optional
-  # t.stats_options = ['--list-undoc']         # optional
+  t.options = ["--markup",  "markdown"]
+  t.stats_options = ["--list-undoc"]
 end
 
 task ghpages: :yard do
