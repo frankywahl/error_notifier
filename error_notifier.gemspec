@@ -38,4 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry"
   spec.add_development_dependency "pry-byebug"
   spec.add_development_dependency "yard"
+  spec.add_development_dependency "codeclimate-test-reporter"
 end
