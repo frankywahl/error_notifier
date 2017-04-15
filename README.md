@@ -1,5 +1,10 @@
 # ErrorNotifier
 
+[![Build Status](https://travis-ci.org/frankywahl/error_notifier.svg?branch=master)](https://travis-ci.org/frankywahl/error_notifier)
+[![Code Climate](https://codeclimate.com/github/frankywahl/error_notifier/badges/gpa.svg)](https://codeclimate.com/github/frankywahl/error_notifier)
+[![Test Coverage](https://codeclimate.com/github/frankywahl/error_notifier/badges/coverage.svg)](https://codeclimate.com/github/frankywahl/error_notifier/coverage)
+
+
 A tool for managing multiple error handlers. This decouples the error handling from the tools that is used to do so.
 
 ## Installation
