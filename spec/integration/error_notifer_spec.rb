@@ -22,7 +22,7 @@ describe ErrorNotifier do
       before(:each) { described_class.add_notifier(klass) }
       let(:klass) do
         Class.new do
-          def self.call(_e, _options); end
+          def self.call(_err, _options); end
         end
       end
 

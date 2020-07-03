@@ -39,10 +39,10 @@ module ErrorNotifier
     # Actually send out the notifications
     # to all the registered services
     # @return [nil]
-    def notify(e, options = {})
+    def notify(err, options = {})
       @notifiers = {} unless defined? @notifiers
       @notifiers.each do |_name, notifier|
-        notifier.call(e, options)
+        notifier.call(err, options)
       end
       nil
     end
@@ -66,6 +66,7 @@ module ErrorNotifier
         unless (name.respond_to? :call) && (name.method(:call).arity == 2)
           raise InvalidNotiferError "When passing object #{name} to the ErrorNotifier, it must respond to `call(e, options)`"
         end
+
         @notifiers[name.class.to_s] = name
       end
     end
