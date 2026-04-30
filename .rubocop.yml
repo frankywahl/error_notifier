@@ -9,3 +9,6 @@ Style/Documentation:
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Style/HashEachMethods:
+  Enabled: false
